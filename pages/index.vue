@@ -1,14 +1,19 @@
 <template>
   <section class="container">
     <div>
-      <div class="links">
-        <button
-          class="button--green"
-          @click="search">Search</button>
-        <input
-          v-model="keyword"
-          placeholder="keyword">
-      </div>
+      <el-form
+        :inline="true"
+        @submit.prevent.native="search">
+        <el-form-item>
+          <el-input
+            v-model="keyword"
+            placeholder="keyword"/>
+        </el-form-item>
+        <el-form-item>
+          <el-button
+            @click="search">Search</el-button>
+        </el-form-item>
+      </el-form>
       <div>
         <ul>
           <li
