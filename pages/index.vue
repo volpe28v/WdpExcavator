@@ -1,22 +1,29 @@
 <template>
   <section class="container">
     <div>
-      <logo/>
-      <h1 class="title">
-        WdpExcavator
-      </h1>
-      <h2 class="subtitle">
-        WEB + DB PRESS keyword search web application
-      </h2>
       <div class="links">
-        <a
-          href="https://nuxtjs.org/"
-          target="_blank"
-          class="button--green">Documentation</a>
-        <a
-          href="https://github.com/nuxt/nuxt.js"
-          target="_blank"
-          class="button--grey">GitHub</a>
+        <button
+          class="button--green"
+          @click="search">Search</button>
+        <input
+          v-model="keyword"
+          placeholder="keyword">
+      </div>
+      <div>
+        <ul>
+          <li
+            v-for="toc in found_tocs"
+            :key="toc.title">
+            {{ toc.title }}
+            <ul>
+              <li
+                v-for="line in toc.found_lines"
+                :key="line">
+                {{ line }}
+              </li>
+            </ul>
+          </li>
+        </ul>
       </div>
     </div>
   </section>
@@ -24,10 +31,26 @@
 
 <script>
 import Logo from '~/components/Logo.vue'
+import axios from 'axios'
 
 export default {
   components: {
     Logo
+  },
+  data: function() {
+    return {
+      keyword: '',
+      found_tocs: []
+    }
+  },
+  methods: {
+    search: function() {
+      var self = this
+      axios.post('/search', { query: self.keyword }).then(function(res) {
+        console.log(res)
+        self.found_tocs = res.data.results
+      })
+    }
   }
 }
 </script>
@@ -38,7 +61,6 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  text-align: center;
 }
 
 .title {
