@@ -1,37 +1,47 @@
 <template>
-  <section class="container">
-    <div>
+  <el-container>
+    <el-header>
       <el-form
         :inline="true"
         @submit.prevent.native="search">
-        <el-form-item>
+        <el-form-item label="Keyword">
           <el-input
             v-model="keyword"
+            :disabled="loading"
             placeholder="keyword"/>
+        </el-form-item>
+        <el-form-item label="Target books">
+          <el-select
+            v-model="book_number"
+            :disabled="loading"
+            placeholder="Select">
+            <el-option
+              v-for="number in book_numbers"
+              :key="number"
+              :value="number"/>
+          </el-select>
         </el-form-item>
         <el-form-item>
           <el-button
+            :disabled="loading"
+            type="primary"
+            icon="el-icon-search"
             @click="search">Search</el-button>
         </el-form-item>
       </el-form>
-      <div>
-        <ul>
-          <li
-            v-for="toc in found_tocs"
-            :key="toc.title">
-            {{ toc.title }}
-            <ul>
-              <li
-                v-for="line in toc.found_lines"
-                :key="line">
-                {{ line }}
-              </li>
-            </ul>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </section>
+    </el-header>
+
+    <el-main>
+      <el-tree
+        v-loading="loading"
+        :data="found_tocs"
+        :empty-text="empty_text"
+        :props="defaultProps"
+        :render-content="renderContent"
+        default-expand-all
+      />
+    </el-main>
+  </el-container>
 </template>
 
 <script>
@@ -45,48 +55,56 @@ export default {
   data: function() {
     return {
       keyword: '',
-      found_tocs: []
+      searched_keyword: '',
+      found_tocs: [],
+      book_numbers: [20, 40, 60, 80, 100],
+      book_number: 20,
+      loading: false,
+      defaultProps: {
+        children: 'found_lines',
+        label: 'title'
+      },
+      empty_text: 'WEB+DB Press Search'
     }
   },
   methods: {
-    search: function() {
+    search() {
       var self = this
-      axios.post('/search', { query: self.keyword }).then(function(res) {
-        console.log(res)
-        self.found_tocs = res.data.results
-      })
+      self.found_tocs = []
+      self.loading = true
+      self.searched_keyword = self.keyword
+      axios
+        .post('/search', {
+          query: self.searched_keyword,
+          number: self.book_number
+        })
+        .then(function(res) {
+          console.log(res)
+          self.found_tocs = res.data.results
+          self.loading = false
+        })
+    },
+    renderContent(h, { node, data, store }) {
+      var self = this
+      var keyword_reg = new RegExp('(' + self.searched_keyword + ')', 'gi')
+      const highlight_title = node.label.replace(
+        keyword_reg,
+        '<span style="color: red">$1</span>'
+      )
+      return (
+        <span class="el-tree-node__label" domPropsInnerHTML={highlight_title} />
+      )
     }
   }
 }
 </script>
 
 <style>
-.container {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.el-header {
+  padding-top: 10px;
 }
 
-.title {
-  font-family: 'Quicksand', 'Source Sans Pro', -apple-system, BlinkMacSystemFont,
-    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  display: block;
-  font-weight: 300;
-  font-size: 100px;
-  color: #35495e;
-  letter-spacing: 1px;
-}
-
-.subtitle {
-  font-weight: 300;
-  font-size: 42px;
-  color: #526488;
-  word-spacing: 5px;
-  padding-bottom: 15px;
-}
-
-.links {
-  padding-top: 15px;
+.loading {
+  padding-left: 50px;
 }
 </style>

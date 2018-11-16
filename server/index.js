@@ -17,15 +17,23 @@ app.set('port', port)
 let config = require('../nuxt.config.js')
 config.dev = !(process.env.NODE_ENV === 'production')
 
+var PAGE_NUMBER = 20;
 app.post('/search', function (req, res){
-  console.log(req.url);
-  console.log(req.body);
   var query = req.body.query;
-  console.log(query)
+  var number = req.body.number;
 
-  gihyo.search(query)
+  var search_requests = [];
+  for(var i = 0; i < number; i += PAGE_NUMBER){
+    search_requests.push(gihyo.search(query, i));
+  }
+
+  Promise.all(search_requests)
     .then(function(results){
-      res.send({ results: results })
+      var found_tocs = Array.prototype.concat.apply([], results);
+      res.send({ results: found_tocs})
+    })
+    .catch(function(err){
+      console.log(err);
     });
 });
 

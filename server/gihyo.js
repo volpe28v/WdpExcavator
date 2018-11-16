@@ -24,7 +24,7 @@ module.exports.search = function(keyword, page = 0){
           var found_lines = [];
           toc.split("\n").forEach(function(line){
             if (line.match(keyword_reg)){
-              found_lines.push(line.trim());
+              found_lines.push({ title: line.trim() });
             }
           });
 
