@@ -28,6 +28,9 @@
             icon="el-icon-search"
             @click="search">Search</el-button>
         </el-form-item>
+        <el-form-item>
+          <div class="el-form-item__label">found <span v-text="found_tocs.length"/> books</div>
+        </el-form-item>
       </el-form>
 
       <el-tree
