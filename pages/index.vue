@@ -3,12 +3,13 @@
     <el-main>
       <el-form
         :inline="true"
-        @submit.prevent.native="search">
+        @submit.native.prevent="search">
         <el-form-item label="Keyword">
           <el-input
             v-model="keyword"
             :disabled="loading"
-            placeholder="keyword"/>
+            placeholder="keyword"
+          />
         </el-form-item>
         <el-form-item label="Target books">
           <el-select
@@ -26,10 +27,18 @@
             :disabled="loading"
             type="primary"
             icon="el-icon-search"
-            @click="search">Search</el-button>
+            native-type="submit"
+          >Search</el-button>
         </el-form-item>
         <el-form-item>
-          <div class="el-form-item__label">found <span v-text="found_tocs.length"/> books</div>
+          <el-tag
+            v-if="found_tocs.length > 0"
+            type="success">
+          <span v-text="found_tocs.length"/> books</el-tag>
+          <el-tag
+            v-if="found_tocs.length == 0"
+            type="info">
+          <span v-text="found_tocs.length"/> books</el-tag>
         </el-form-item>
       </el-form>
 
