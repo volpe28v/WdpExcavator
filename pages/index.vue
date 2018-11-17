@@ -1,6 +1,6 @@
 <template>
   <el-container>
-    <el-header>
+    <el-main>
       <el-form
         :inline="true"
         @submit.prevent.native="search">
@@ -29,9 +29,7 @@
             @click="search">Search</el-button>
         </el-form-item>
       </el-form>
-    </el-header>
 
-    <el-main>
       <el-tree
         v-loading="loading"
         :data="found_tocs"
@@ -86,14 +84,25 @@ export default {
     },
     renderContent(h, { node, data, store }) {
       var self = this
-      var keyword_reg = new RegExp('(' + self.searched_keyword + ')', 'gi')
-      const highlight_title = node.label.replace(
-        keyword_reg,
-        '<span style="color: red">$1</span>'
-      )
-      return (
-        <span class="el-tree-node__label" domPropsInnerHTML={highlight_title} />
-      )
+      if (data.found_lines) {
+        return (
+          <span class="el-tree-node__label" style="color: #409EFF">
+            {node.label}
+          </span>
+        )
+      } else {
+        var keyword_reg = new RegExp('(' + self.searched_keyword + ')', 'gi')
+        const highlight_title = node.label.replace(
+          keyword_reg,
+          '<span style="color: #F56C6C">$1</span>'
+        )
+        return (
+          <span
+            class="el-tree-node__label"
+            domPropsInnerHTML={highlight_title}
+          />
+        )
+      }
     }
   }
 }
