@@ -2,6 +2,10 @@
 
 > WEB + DB PRESS keyword search web application
 
+- Nuxt.js
+- Element UI
+- Express
+
 ## Build Setup
 
 ``` bash
