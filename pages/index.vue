@@ -11,7 +11,7 @@
             placeholder="keyword"
           />
         </el-form-item>
-        <el-form-item label="Target books">
+        <el-form-item label="Target recent">
           <el-select
             v-model="book_number"
             :disabled="loading"
@@ -21,6 +21,7 @@
               :key="number"
               :value="number"/>
           </el-select>
+          <label class="el-form-item__label">books</label>
         </el-form-item>
         <el-form-item>
           <el-button
@@ -34,6 +35,7 @@
           <el-tag
             v-if="found_tocs.length > 0"
             type="success">
+            found
           <span v-text="found_tocs.length"/> books</el-tag>
           <el-tag
             v-if="found_tocs.length == 0"
@@ -48,6 +50,7 @@
         :empty-text="empty_text"
         :props="defaultProps"
         :render-content="renderContent"
+        :expand-on-click-node="false"
         default-expand-all
       />
     </el-main>
@@ -97,9 +100,14 @@ export default {
     renderContent(h, { node, data, store }) {
       var self = this
       if (data.found_lines) {
+        var url = data.url + '#toc'
         return (
-          <span class="el-tree-node__label" style="color: #409EFF">
-            {node.label}
+          <span class="custom-tree-node">
+            <span class="el-tree-node__label" style="color: #409EFF">
+              <a class="title-link" href={url} target="_blank">
+                {node.label}
+              </a>
+            </span>
           </span>
         )
       } else {
@@ -127,5 +135,19 @@ export default {
 
 .loading {
   padding-left: 50px;
+}
+
+.custom-tree-node {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  padding-right: 8px;
+}
+
+.title-link {
+  color: rgb(64, 158, 255);
+  text-decoration: none;
 }
 </style>

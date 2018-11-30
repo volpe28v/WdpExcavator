@@ -20,6 +20,7 @@ module.exports.search = function(keyword, page = 0){
         var found_tocs = results.map(function(result){
           var title = result.$('title').text();
           var toc = result.$('#toc').text();
+          var url  = result.response.request.href;
 
           var found_lines = [];
           toc.split("\n").forEach(function(line){
@@ -28,7 +29,7 @@ module.exports.search = function(keyword, page = 0){
             }
           });
 
-          return { title: title, found_lines: found_lines };
+          return { title: title, url: url, found_lines: found_lines };
         }).filter(function(toc){
           return toc.found_lines.length > 0;
         });
